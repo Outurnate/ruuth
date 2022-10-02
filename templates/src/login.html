@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login to {{ realm }}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 20'><text x='-1' y='15'>🔐</text></svg>" type="image/svg+xml" />
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    body {
+      color: #ffffff;
+      font-family: Sans-Serif;
+    }
+    .login-container {
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #0f0f0f;
+      border-radius: 25px;
+      padding: 30px;
+    }
+    @media screen and (prefers-color-scheme: light) {
+      body {
+        color: #000000;
+      }
+      .background {
+        display: none;
+      }
+      .login-container {
+        background: #888888;
+      }
+      button {
+        color: #ffffff;
+        background: #000000;
+      }
+      button:hover {
+        background: #222222;
+      }
+    }
+    .error {
+      text-align: center;
+      color: red;
+    }
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      border-radius: 5px;
+    }
+    input {
+      padding: 5px;
+      font-size: 16px;
+      border-width: 1px;
+      border-color: #cccccc;
+      color: #000000;
+      border-style: solid;
+    }
+    input:focus {
+      outline:none;
+    }
+    button {
+      color: #ffffff;
+      background: #444444;
+      padding: 10px 20px 10px 20px;
+      border-width: 0px;
+    }
+    button:hover {
+      background: #555555;
+    }
+    img {
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <svg class="background" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="a">
+        <feTurbulence type="fractalNoise" baseFrequency="90" result="noisy"/>
+        <feColorMatrix type="saturate" values="0"/>
+        <feBlend in="SourceGraphic" in2="noisy" mode="multiply"/>
+      </filter>
+    </defs>
+    <rect width="100%" height="100%" style="fill:#1e1e1e" filter="url(#a)"/>
+  </svg>
+  <div class="login-container">
+    <h1>🔐&nbsp;Login to {{ realm }}</h1>
+    {% if url.is_some() %}
+    <form action="login?url={{ url.as_ref().unwrap() }}" method="post">
+    {% else %}
+    <form action="login" method="post">
+    {% endif %}
+      {% if error.is_some() && error.unwrap() %}
+      <div class="error">Invalid credentials.  Please try again</div>
+      {% endif %}
+      <input type="hidden" name="authenticity_token" value="{{ authenticity_token }}" />
+      <input type="text" placeholder="Username" name="username" autocomplete="username" required><br />
+      <input type="password" placeholder="Password" name="password" autocomplete="current-password" required><br />
+      <input type="text" placeholder="One time password" name="passcode" autocomplete="one-time-code" required><br />
+      {% if captcha.is_some() %}
+      <br /><img src="data:image/png;base64,{{ captcha.as_ref().unwrap().base64 }}" width="{{ captcha.as_ref().unwrap().w }}" height="{{ captcha.as_ref().unwrap().h }}" alt="captcha" />
+      <input type="text" placeholder="Enter the characters shown in the image" name="captcha" required><br />
+      {% endif %}
+      <button>Login</button>
+    </form>
+  </div>
+</body>
+</html>
