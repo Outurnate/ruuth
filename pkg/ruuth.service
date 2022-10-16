@@ -1,0 +1,12 @@
+[Unit]
+Description=ruuth authenticator
+After=network.target
+
+[Service]
+Type=simple
+User=ruuth
+ExecStart=/usr/bin/ruuth run --config=/etc/ruuth.toml
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

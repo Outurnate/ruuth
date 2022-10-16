@@ -2,6 +2,8 @@
 name = "ruuth"
 version = "0.1.0"
 edition = "2021"
+license = "GPL-3.0-or-later"
+description = "Lightweight NGINX auth_request backend"
 
 [dependencies]
 
@@ -57,3 +59,16 @@ minify-html = "0.10.0"
 strip = true
 lto = true
 codegen-units = 1
+
+[package.metadata.generate-rpm]
+assets = [
+  { source = "target/release/ruuth", dest = "/usr/bin/ruuth", mode = "755", config = false, doc = false },
+  { source = "pkg/ruuth.toml", dest = "/etc/ruuth.toml", mode = "644", config = true, doc = false },
+  { source = "pkg/ruuth.service", dest = "/usr/lib/systemd/system/ruuth.service", mode = "644", config = true, doc = false }
+]
+pre_install_script = "getent passwd ruuth >/dev/null || useradd -r -g ruuth --system --no-create-home -s /sbin/nologin -c \"ruuth authentication daemon account\" ruuth"
+post_install_script = "systemctl daemon-reload"
+pre_uninstall_script = "systemctl disable --now ruuth"
+
+[package.metadata.generate-rpm.requires]
+shadow-utils = "*"
