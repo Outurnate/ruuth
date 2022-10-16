@@ -35,3 +35,8 @@ jobs:
         crate: cargo-generate-rpm
     - name: Package RPM
       run: cargo generate-rpm
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ruuth-rpm
+        path: target/generate-rpm/*.rpm
