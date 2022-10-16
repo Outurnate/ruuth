@@ -17,9 +17,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install stable toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
     - name: Build
       run: cargo build --verbose
-    - name: rust-cargo-install
+    - name: Install RPM build tool
       uses: actions-rs/install@v0.1.2
       with:
         crate: cargo-generate-rpm
