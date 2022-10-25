@@ -105,7 +105,7 @@ checksum = "23b62fc65de8e4e7f52534fb52b0f3ed04746ae267519eef2a83941e8085068b"
 [[package]]
 name = "askama"
 version = "0.11.2"
-source = "git+https://github.com/djc/askama.git#1f74828931af0e509e2a676c6d61cff32f23b409"
+source = "git+https://github.com/djc/askama.git#1b18bab91ba773425e521abc276a1278e0d61f3c"
 dependencies = [
  "askama_derive",
  "askama_escape",
@@ -117,7 +117,7 @@ dependencies = [
 [[package]]
 name = "askama_axum"
 version = "0.1.0"
-source = "git+https://github.com/djc/askama.git#1f74828931af0e509e2a676c6d61cff32f23b409"
+source = "git+https://github.com/djc/askama.git#1b18bab91ba773425e521abc276a1278e0d61f3c"
 dependencies = [
  "askama",
  "axum-core",
@@ -127,7 +127,7 @@ dependencies = [
 [[package]]
 name = "askama_derive"
 version = "0.12.0"
-source = "git+https://github.com/djc/askama.git#1f74828931af0e509e2a676c6d61cff32f23b409"
+source = "git+https://github.com/djc/askama.git#1b18bab91ba773425e521abc276a1278e0d61f3c"
 dependencies = [
  "mime",
  "mime_guess",
@@ -142,7 +142,7 @@ dependencies = [
 [[package]]
 name = "askama_escape"
 version = "0.10.3"
-source = "git+https://github.com/djc/askama.git#1f74828931af0e509e2a676c6d61cff32f23b409"
+source = "git+https://github.com/djc/askama.git#1b18bab91ba773425e521abc276a1278e0d61f3c"
 
 [[package]]
 name = "async-channel"
@@ -1554,9 +1554,12 @@ checksum = "c4a1e36c821dbe04574f602848a19f742f4fb3c98d40449f11bcad18d6b17421"
 
 [[package]]
 name = "humansize"
-version = "1.1.1"
+version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02296996cb8796d7c6e3bc2d9211b7802812d36999a51bb754123ead7d37d026"
+checksum = "a866837516f34ad34fb221f3ee01fd0db75f2c2f6abeda2047dc6963fb04ad9a"
+dependencies = [
+ "libm",
+]
 
 [[package]]
 name = "hyper"
