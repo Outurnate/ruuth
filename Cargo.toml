@@ -44,7 +44,7 @@ sha2 = "0.10.6"
 
 # core lib type stuff
 tokio = { version = "1.21.0", default-features = false }
-serde = { version = "1.0.144", features = ["derive"] }
+serde = { version = "1.0.147", features = ["derive"] }
 rand_core = { version = "0.6", features = ["std"] }
 base64 = "0.13.0"
 qrcode = { version = "0.12.0", default-features = false }
