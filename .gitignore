@@ -1,2 +1,4 @@
 /target
 /templates/*.html
+Cargo.lock
+/pkg/ruuth.toml.default

@@ -1,49 +1,70 @@
-# Web host
+# Web hosting settings
 [host]
+# This secret value should be uniquely set before first run
+# Value is used as the pepper for argon2id - if it is changed
+# all password are invalidated.  Value is also used to encrypt
+# session secrets
+cluster_secret = "PLEASECHANGEME"
 
-# Specify address and socket to bind to
-bind="127.0.0.1:3000"
-
-# Define a shared secret to be used by all
-# ruuth instances in the cluster.  Changing
-# this value will invalidate all users and
-# running sessions
-cluster_secret="beans"
-
-# Specify a database URL to store users
+# Configures database backend
+#
+# sqlite
+#
 database_url="sqlite://main.db?mode=rwc"
+#
+# postgres
+#
 # database_url="postgres://postgres:password@localhost/database"
+#
+# mysql
+#
 # database_url="mysql://user:pass@host/database"
 
-# Cookie domain name
-domain="example.com"
+# Root domain name for securing the cookie.  If the auth pages
+# are hosted at a subdomain, this should be the parent domain of
+# both the authentication domain and resource domain
+#
+# i.e. if the auth pages are at auth.example.com, and the resources
+# are at protected.example.com and example.com, this value should
+# be example.com
+domain = "example.com"
 
-# To use HTTPS, set a public and private
-# key.  If omitted, HTTP will be used
-# [host.tls]
-# public_key="self_signed_certs/cert.pem"
-# private_key="self_signed_certs/key.pem"
+# Socket binding config
+[host.bind]
+#
+# Plain http TCP socket
+#
+type = "TCP"
+bind = "127.0.0.1:3000"
+#
+# HTTPS socket
+#
+# type = "TLS"
+# bind = "127.0.0.1:3000"
+# public_key="/path/to/cert.pem"
+# private_key="/path/to/key.pem"
+#
+# Unix socket
+#
+# type = "UNIX"
+# path = "/var/run/ruuth.sock"
 
 # Lockout behaviour
 [behaviour]
 
-# How many failed logins to tolerate
-# before we start sending captchas?
+# How many failed logins to tolerate before we start sending captchas?
 # captcha = 5
 
-# How many failed logins to tolerate
-# before we begin pretending to login?
+# How many failed logins to tolerate before we begin pretending to login?
 # fake_login = 10
 
-# How long a failed login should be
-# remember for (in minutes)
+# How long a failed login should be remember for (in minutes)
 expiration = 30
 
 # Session parameters
 [session]
 
-# How long a session must idle before
-# it is deleted
+# How long a session must idle before it is deleted
 # session_timeout_seconds = 3600
 
 # Override the cookie name to a custom name
@@ -60,14 +81,14 @@ backend = "Sql"
 [logging]
 
 # Custom filter to apply to logs
-# trace_filter="rust-auth=trace"
+# trace_filter="ruuth=trace"
 
 # Logging level
-#minimum_level="Debug"
-minimum_level="Trace"
-#minimum_level="Info"
-#minimum_level="Warning"
-#minimum_level="Error"
+# minimum_level="Debug"
+# minimum_level="Trace"
+minimum_level="Info"
+# minimum_level="Warning"
+# minimum_level="Error"
 
 # Path to log file
-# file="ruuth.log"
+file="/var/log/ruuth.log"

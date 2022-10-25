@@ -1,0 +1,6 @@
+tab_spaces = 2
+imports_granularity = "Crate"
+
+unstable_features = true
+brace_style = "AlwaysNextLine"
+control_brace_style = "AlwaysNextLine"

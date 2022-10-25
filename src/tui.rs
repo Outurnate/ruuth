@@ -1,6 +1,27 @@
+/*
+ruuth: simple auth_request backend
+Copyright (C) 2022 Joe Dillon
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+use color_eyre::{
+  eyre::{Context, Result},
+  owo_colors::OwoColorize,
+};
 use std::io;
-use color_eyre::{eyre::{Result, Context}, owo_colors::OwoColorize};
-use zxcvbn::{zxcvbn, feedback::Suggestion};
+use zxcvbn::{feedback::Suggestion, zxcvbn};
 
 use crate::user_manager::SetupCode;
 
@@ -16,15 +37,23 @@ pub fn get_password() -> Result<String, io::Error>
       Ok(entropy) =>
       {
         let score = entropy.score();
-        let meter = match (score, "▮".repeat(score.into()) + &"▯".repeat((4 - score).into()))
+        let meter = match (
+          score,
+          "▮".repeat(score.into()) + &"▯".repeat((4 - score).into()),
+        )
         {
           (0, meter) => meter.red().to_string(),
           (1, meter) => meter.yellow().to_string(),
           (2, meter) => meter.bright_yellow().to_string(),
-          (_, meter) => meter.green().to_string()
+          (_, meter) => meter.green().to_string(),
         };
         let crack = entropy.crack_times();
-        println!("Strength: {} (online crack time: {}, offline crack time: {})", meter, crack.online_throttling_100_per_hour(), crack.offline_slow_hashing_1e4_per_second());
+        println!(
+          "Strength: {} (online crack time: {}, offline crack time: {})",
+          meter,
+          crack.online_throttling_100_per_hour(),
+          crack.offline_slow_hashing_1e4_per_second()
+        );
         if let Some(feedback) = entropy.feedback()
         {
           if let Some(warning) = feedback.warning()
@@ -57,8 +86,8 @@ pub fn get_password() -> Result<String, io::Error>
           println!("Password is too weak - try again");
           continue;
         }
-      },
-      Err(_) => continue
+      }
+      Err(_) => continue,
     }
     confirm_password = rpassword::prompt_password("Confirm password: ")?;
     if password != confirm_password
@@ -76,7 +105,10 @@ pub fn maybe_show_qr_code(code: SetupCode, show: bool) -> Result<()>
 {
   if show
   {
-    println!("{}", code.get_qr_code().wrap_err("failed to generate qr code")?);
+    println!(
+      "{}",
+      code.get_qr_code().wrap_err("failed to generate qr code")?
+    );
   }
   else
   {

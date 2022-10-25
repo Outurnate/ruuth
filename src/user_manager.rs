@@ -1,19 +1,34 @@
-use std::time::{SystemTime, UNIX_EPOCH};
-use argon2::{password_hash::SaltString, Argon2, PasswordVerifier, PasswordHash};
-use argon2::PasswordHasher;
+/*
+ruuth: simple auth_request backend
+Copyright (C) 2022 Joe Dillon
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+use argon2::{password_hash::SaltString, Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use askama::filters::urlencode;
 use base32::Alphabet;
+use color_eyre::eyre::{eyre, Result};
+use qrcode::{render::unicode, types::QrError, QrCode};
 use rand::thread_rng;
-use sea_orm::{EntityTrait, ModelTrait};
-use qrcode::{render::unicode, QrCode, types::QrError};
 use rand_core::CryptoRngCore;
-use sea_orm::{DatabaseConnection, Set, ActiveModelTrait};
-use color_eyre::eyre::{Result, eyre};
-use totp_lite::{Sha1, totp_custom, DEFAULT_STEP};
-use tracing::{instrument, event};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, ModelTrait, Set};
+use std::time::{SystemTime, UNIX_EPOCH};
+use totp_lite::{totp_custom, Sha1, DEFAULT_STEP};
+use tracing::{event, instrument};
 
-use crate::entities::user;
-use crate::entities::prelude::*;
+use crate::entities::{prelude::*, user};
 
 fn fill_bytes<R: CryptoRngCore, const N: usize>(rng: &mut R) -> [u8; N]
 {
@@ -54,10 +69,13 @@ impl SetupCode
 {
   pub fn get_qr_code(&self) -> Result<String, QrError>
   {
-    Ok(QrCode::new(&self.0)?.render::<unicode::Dense1x2>()
-      .dark_color(unicode::Dense1x2::Light)
-      .light_color(unicode::Dense1x2::Dark)
-      .build())
+    Ok(
+      QrCode::new(&self.0)?
+        .render::<unicode::Dense1x2>()
+        .dark_color(unicode::Dense1x2::Light)
+        .light_color(unicode::Dense1x2::Dark)
+        .build(),
+    )
   }
 
   pub fn get_raw_code(&self) -> String
@@ -68,7 +86,12 @@ impl SetupCode
 
 fn create_hasher<'a>(pepper: &'a [u8]) -> Result<Argon2<'a>, argon2::Error>
 {
-  Argon2::new_with_secret(pepper, argon2::Algorithm::Argon2id, argon2::Version::V0x13, argon2::Params::default())
+  Argon2::new_with_secret(
+    pepper,
+    argon2::Algorithm::Argon2id,
+    argon2::Version::V0x13,
+    argon2::Params::default(),
+  )
 }
 
 #[derive(Clone)]
@@ -76,43 +99,49 @@ pub struct UserManager
 {
   db: DatabaseConnection,
   issuer: String,
-  pepper: Vec<u8>
+  pepper: Vec<u8>,
 }
 
 impl UserManager
 {
   pub fn new(db: DatabaseConnection, issuer: String, pepper: Vec<u8>) -> Result<Self>
   {
-    Ok(Self
-    {
-      db,
-      issuer,
-      pepper
-    })
+    Ok(Self { db, issuer, pepper })
   }
 
   pub async fn register(&self, username: String, password: String) -> Result<SetupCode>
   {
     let totp_secret = TotpSecret::new();
     let setup_code = totp_secret.get_setup_code(&username, &self.issuer);
-    user::ActiveModel
-    {
+    user::ActiveModel {
       username: Set(username),
       password_hash: Set(self.hash_password(password)?),
-      totp_secret: Set(totp_secret.into())
-    }.insert(&self.db).await?;
+      totp_secret: Set(totp_secret.into()),
+    }
+    .insert(&self.db)
+    .await?;
 
     Ok(setup_code)
   }
 
   fn hash_password(&self, password: String) -> Result<String>
   {
-    Ok(create_hasher(&self.pepper)?.hash_password(password.as_bytes(), &SaltString::generate(&mut thread_rng()))?.to_string())
+    Ok(
+      create_hasher(&self.pepper)?
+        .hash_password(
+          password.as_bytes(),
+          &SaltString::generate(&mut thread_rng()),
+        )?
+        .to_string(),
+    )
   }
 
   async fn get_user(&self, username: String) -> Result<user::Model>
   {
-    User::find_by_id(username.clone()).one(&self.db).await?.ok_or_else(|| eyre!("User {} not found!", username))
+    User::find_by_id(username.clone())
+      .one(&self.db)
+      .await?
+      .ok_or_else(|| eyre!("User {} not found!", username))
   }
 
   pub async fn delete(&self, username: String) -> Result<()>
@@ -141,11 +170,10 @@ impl UserManager
 
   fn create_fake_user(&self) -> Result<user::Model>
   {
-    Ok(user::Model
-    {
+    Ok(user::Model {
       username: "kevin".to_owned(),
       password_hash: self.hash_password("hunter2".to_owned())?,
-      totp_secret: vec![0; 128]
+      totp_secret: vec![0; 128],
     })
   }
 
@@ -159,12 +187,17 @@ impl UserManager
     let user = user.unwrap_or(fake_user);
 
     // validate the totp
-    let seconds: u64 = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-    let passcode_valid = totp_custom::<Sha1>(DEFAULT_STEP, 6, &user.totp_secret, seconds) == passcode;
+    let seconds: u64 = SystemTime::now()
+      .duration_since(UNIX_EPOCH)
+      .unwrap()
+      .as_secs();
+    let passcode_valid =
+      totp_custom::<Sha1>(DEFAULT_STEP, 6, &user.totp_secret, seconds) == passcode;
 
     // validate the password
     let known_hash = PasswordHash::new(&user.password_hash)?;
-    let password_valid = match create_hasher(&self.pepper)?.verify_password(password.as_bytes(), &known_hash)
+    let password_valid = match create_hasher(&self.pepper)?
+      .verify_password(password.as_bytes(), &known_hash)
     {
       Err(err) =>
       {
@@ -173,7 +206,13 @@ impl UserManager
       }
       Ok(_) => true,
     };
-    event!(tracing::Level::INFO, "username found: {}, passcode valid: {}, password valid: {}", !faked, passcode_valid, password_valid);
+    event!(
+      tracing::Level::INFO,
+      "username found: {}, passcode valid: {}, password valid: {}",
+      !faked,
+      passcode_valid,
+      password_valid
+    );
     Ok(!faked && passcode_valid && password_valid)
   }
 }

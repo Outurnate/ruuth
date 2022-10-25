@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=ruuth
-ExecStart=/usr/bin/ruuth run --config=/etc/ruuth.toml
+ExecStart=/usr/bin/ruuth --config=/etc/ruuth.toml run
 Restart=on-failure
 
 [Install]
