@@ -2,8 +2,9 @@ name: Rust
 
 on:
   push:
-    tags:
-      - "*"
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -34,18 +35,8 @@ jobs:
         crate: cargo-generate-rpm
     - name: Package RPM
       run: cargo generate-rpm
-    - name: Get the version
-      id: get_version
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
       with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ steps.get_version.outputs.VERSION }}
-        draft: false
-        prerelease: false
-        allowUpdates: true
-        artifacts: target/generate-rpm/*.rpm
+        name: ruuth-rpm
+        path: target/generate-rpm/*.rpm
