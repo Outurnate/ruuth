@@ -31,7 +31,7 @@ sea-orm-migration = { version = "0.10.0", default-features = false, features = [
 sqlx = { version = "0.6.2", default-features = false, features = ["sqlite", "postgres", "mysql"] }
 
 # config/cli
-clap = { version = "4.0.4", features = ["derive"] }
+clap = { version = "4.0.18", features = ["derive"] }
 clap-verbosity-flag = "2.0.0"
 zxcvbn = "2.2.1"
 config = { version = "0.13.2", default-features = false, features = ["toml"] }
