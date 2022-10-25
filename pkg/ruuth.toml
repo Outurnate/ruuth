@@ -36,6 +36,7 @@ domain = "example.com"
 #
 type = "TCP"
 bind = "127.0.0.1:3000"
+
 #
 # HTTPS socket
 #
@@ -43,6 +44,7 @@ bind = "127.0.0.1:3000"
 # bind = "127.0.0.1:3000"
 # public_key="/path/to/cert.pem"
 # private_key="/path/to/key.pem"
+
 #
 # Unix socket
 #

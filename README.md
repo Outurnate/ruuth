@@ -257,7 +257,7 @@ Distributed under the GPLv3 License. See `LICENSE.md` for more information.
 
 ## Contact
 
-Your Name - [@outurnate](https://twitter.com/outurnate) - joseph@outurnate.com
+Joe Dillon - [@outurnate](https://twitter.com/outurnate) - joseph@outurnate.com
 
 Project Link: [https://github.com/outurnate/ruuth](https://github.com/outurnate/ruuth)
 
