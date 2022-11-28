@@ -17,7 +17,7 @@ color-eyre = { version = "0.6", features = ["tracing-error"] }
 
 # askama/axum
 axum = { version = "0.5", features = ["headers"] }
-axum-sessions = "0.3"
+axum-sessions = "0.4"
 async-redis-session = "0.2"
 async-sqlx-session = { git = "https://github.com/Outurnate/async-sqlx-session", branch = "Outurnate-version-bump", default-features = false, features = ["mysql", "pg", "sqlite", "tokio_rustls"] }
 axum-server = { version = "0.4", features = ["tls-rustls"] }
