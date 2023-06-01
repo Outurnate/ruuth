@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 use std::time::{Duration, SystemTime};
 
 use axum_sessions::{async_session::serde_json, extractors::WritableSession};
+use base64::{engine::general_purpose, Engine};
 use captcha::{
   filters::{Dots, Grid, Noise, Wave},
   RngCaptcha,
@@ -37,8 +38,9 @@ use tokio::{
 use tracing::{event, instrument};
 
 use crate::{
+  config::BehaviourSettings,
   entities::{ban_tracker, prelude::*},
-  session::WritableSessionExt, config::BehaviourSettings,
+  session::WritableSessionExt,
 };
 
 pub struct Base64Image
@@ -67,7 +69,7 @@ impl<const N: usize> ChallengeManager<N>
   {
     let mut challenge = [0; N];
     thread_rng().fill_bytes(&mut challenge);
-    let token = base64::encode(challenge);
+    let token = general_purpose::STANDARD.encode(challenge);
     session.insert("authenticity_token", &token)?;
     Ok(token)
   }

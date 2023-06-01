@@ -17,9 +17,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 use sea_orm::{
-  ActiveModelBehavior, DeriveEntityModel, DerivePrimaryKey, EntityTrait, EnumIter, IdenStatic,
-  PrimaryKeyTrait, RelationDef, RelationTrait,
+  ActiveModelBehavior, DerivePrimaryKey, EntityTrait, EnumIter, PrimaryKeyTrait, RelationDef,
+  RelationTrait,
 };
+use sea_orm_migration::sea_orm::DeriveEntityModel;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "ban_tracker")]

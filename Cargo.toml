@@ -1,6 +1,6 @@
 [package]
 name = "ruuth"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 license = "GPL-3.0-or-later"
 description = "Lightweight NGINX auth_request backend"
@@ -16,20 +16,20 @@ tracing-log = "0.1"
 color-eyre = { version = "0.6", features = ["tracing-error"] }
 
 # askama/axum
-axum = { version = "0.5", features = ["headers"] }
-axum-sessions = "0.3"
-async-redis-session = "0.2"
-async-sqlx-session = { git = "https://github.com/Outurnate/async-sqlx-session", branch = "Outurnate-version-bump", default-features = false, features = ["mysql", "pg", "sqlite", "tokio_rustls"] }
-axum-server = { version = "0.4", features = ["tls-rustls"] }
-askama = { git = "https://github.com/djc/askama.git", default-features = false, features = ["with-axum"] }
-askama_derive = { git = "https://github.com/djc/askama.git" }
-askama_axum = { git = "https://github.com/djc/askama.git" }
+axum = { version = "0.6", features = ["headers"] }
+axum-sessions = "0.5"
+async-redis-session = { git = "https://github.com/jbr/async-redis-session.git", rev = "1bf5106" }
+async-sqlx-session = { git = "https://github.com/jbr/async-sqlx-session.git", rev = "06a3abb", default-features = false, features = ["mysql", "pg", "sqlite"] }
+axum-server = { version = "0.5", features = ["tls-rustls"] }
+askama = { version = "0.12", default-features = false, features = ["with-axum"] }
+askama_derive = "0.12"
+askama_axum = "0.3"
 hyperlocal = "0.8"
 hyper = "0.14"
 
 # sea orm
-sea-orm = { version = "0.10", default-features = false, features = ["runtime-tokio-rustls", "sqlx-sqlite", "sqlx-postgres", "sqlx-mysql"] }
-sea-orm-migration = { version = "0.10", default-features = false, features = ["sqlx-sqlite", "sqlx-postgres", "sqlx-mysql"] }
+sea-orm = { version = "0.11", default-features = false, features = ["runtime-tokio-rustls", "sqlx-sqlite", "sqlx-postgres", "sqlx-mysql"] }
+sea-orm-migration = { version = "0.11", default-features = false, features = ["sqlx-sqlite", "sqlx-postgres", "sqlx-mysql"] }
 sqlx = { version = "0.6", default-features = false, features = ["sqlite", "postgres", "mysql"] }
 
 # config/cli
@@ -40,7 +40,7 @@ config = { version = "0.13", default-features = false, features = ["toml"] }
 rpassword = "7.0"
 
 # crypto primitives
-argon2 = { version = "0.4", features = ["std"] }
+argon2 = { version = "0.5", features = ["std"] }
 totp-lite = "2.0"
 sha2 = "0.10"
 
@@ -48,16 +48,16 @@ sha2 = "0.10"
 tokio = { version = "1.21", default-features = false }
 serde = { version = "1.0", features = ["derive"] }
 rand_core = { version = "0.6", features = ["std"] }
-base64 = "0.13"
+base64 = "0.21"
 qrcode = { version = "0.12", default-features = false }
 captcha = { version = "0.0", default-features = false }
 rand = "0.8"
 base32 = "0.4"
 
 [build-dependencies]
-minify-html = "0.10"
+minify-html = "0.11"
 serde = { version = "1.0", features = ["derive"] }
-toml = "0.5"
+toml = "0.7"
 
 [profile.release]
 strip = true

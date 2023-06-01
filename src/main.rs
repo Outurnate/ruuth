@@ -20,20 +20,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #![allow(clippy::all)]
 
 mod challenge_manager;
+mod config;
 mod db;
 mod entities;
-mod session;
 mod env_parser;
+mod session;
 mod tui;
 mod user_manager;
 mod web;
-mod config;
 
 use challenge_manager::ChallengeManager;
 use color_eyre::eyre::{Context, Result};
 use db::connect;
-use session::SessionBackendStorage;
 use env_parser::{parse_env, Command};
+use session::SessionBackendStorage;
 use sha2::{Digest, Sha512};
 use tui::{get_password, maybe_show_qr_code};
 use user_manager::UserManager;

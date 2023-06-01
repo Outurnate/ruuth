@@ -16,7 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-use std::{net::{SocketAddr, Ipv4Addr, IpAddr}, path::{PathBuf, Path}};
+use std::{
+  net::{IpAddr, Ipv4Addr, SocketAddr},
+  path::{Path, PathBuf},
+};
 
 use serde::{Deserialize, Serialize};
 
@@ -48,8 +51,7 @@ impl Default for SessionSettings
 {
   fn default() -> Self
   {
-    Self
-    {
+    Self {
       backend: SessionStorage::InMemory,
       session_timeout_seconds: None,
       cookie_name: None,
@@ -69,47 +71,52 @@ impl Default for Logging
 {
   fn default() -> Self
   {
-    Self
-    {
+    Self {
       trace_filter: None,
       minimum_level: Some(LogLevel::Info),
-      file: Path::new("/var/log/ruuth/ruuth.log").to_path_buf()
+      file: Path::new("/var/log/ruuth/ruuth.log").to_path_buf(),
     }
   }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, Default)]
 pub enum LogLevel
 {
   Debug,
   Trace,
+  #[default]
   Info,
   Warning,
   Error,
-}
-
-impl Default for LogLevel
-{
-  fn default() -> Self
-  {
-    LogLevel::Info
-  }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
 pub enum BindTo
 {
-  TCP { bind: SocketAddr },
-  TLS { bind: SocketAddr, public_key: PathBuf, private_key: PathBuf },
-  UNIX { path: PathBuf },
+  Tcp
+  {
+    bind: SocketAddr
+  },
+  Tls
+  {
+    bind: SocketAddr,
+    public_key: PathBuf,
+    private_key: PathBuf,
+  },
+  Unix
+  {
+    path: PathBuf
+  },
 }
 
 impl Default for BindTo
 {
   fn default() -> Self
   {
-    Self::TCP { bind: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 3000) }
+    Self::Tcp {
+      bind: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 3000),
+    }
   }
 }
 
@@ -135,11 +142,10 @@ impl Default for Settings
 {
   fn default() -> Self
   {
-    Self
-    {
+    Self {
       host: Default::default(),
       behaviour: Default::default(),
-      session: Default::default(), 
+      session: Default::default(),
       logging: Some(Default::default()),
     }
   }

@@ -17,7 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 use crate::{
-  db::DatabaseBackend, config::{SessionSettings, SessionStorage},
+  config::{SessionSettings, SessionStorage},
+  db::DatabaseBackend,
 };
 use async_redis_session::RedisSessionStore;
 use async_sqlx_session::{MySqlSessionStore, PostgresSessionStore, SqliteSessionStore};
@@ -115,7 +116,7 @@ impl SessionBackendStorage
     })
   }
 
-  pub async fn migrate(&self) -> Result<(), sqlx::Error>
+  pub async fn migrate(&self) -> sqlx::Result<()>
   {
     match self
     {
@@ -126,7 +127,7 @@ impl SessionBackendStorage
     }
   }
 
-  pub async fn cleanup(&self) -> Result<(), sqlx::Error>
+  pub async fn cleanup(&self) -> sqlx::Result<()>
   {
     match self
     {

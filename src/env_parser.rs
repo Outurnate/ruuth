@@ -37,7 +37,9 @@ use tracing_subscriber::{
   registry::LookupSpan,
 };
 
-use crate::config::{Logging, LogLevel, SessionSettings, HostSettings, BehaviourSettings, Settings};
+use crate::config::{
+  BehaviourSettings, HostSettings, LogLevel, Logging, SessionSettings, Settings,
+};
 
 #[derive(Parser)]
 #[clap(

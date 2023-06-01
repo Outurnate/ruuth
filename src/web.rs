@@ -40,8 +40,9 @@ use tracing::{event, instrument};
 
 use crate::{
   challenge_manager::{Base64Image, ChallengeManager},
+  config::BindTo,
   session::{RouterExt, SessionBackendStorage},
-  user_manager::UserManager, config::BindTo,
+  user_manager::UserManager,
 };
 
 #[derive(Deserialize, Debug)]
@@ -184,7 +185,11 @@ impl<const N: usize> WebServer<N>
       spawn(challenge_manager.cleanup_task()),
       match bind_to
       {
-        BindTo::TLS { bind, public_key, private_key } =>
+        BindTo::Tls {
+          bind,
+          public_key,
+          private_key,
+        } =>
         {
           let config = RustlsConfig::from_pem_file(public_key, private_key).await?;
           spawn(async move {
@@ -194,7 +199,7 @@ impl<const N: usize> WebServer<N>
               .wrap_err("error in TLS/TCP server")
           })
         }
-        BindTo::TCP { bind } =>
+        BindTo::Tcp { bind } =>
         {
           spawn(async move {
             axum_server::bind(bind)
@@ -203,7 +208,7 @@ impl<const N: usize> WebServer<N>
               .wrap_err("error in TCP server")
           })
         }
-        BindTo::UNIX { path } =>
+        BindTo::Unix { path } =>
         {
           spawn(async {
             hyper::Server::bind_unix(path)?
@@ -227,8 +232,8 @@ impl<const N: usize> WebServer<N>
     Extension(this): Extension<Self>,
     mut session: WritableSession,
     TypedHeader(XForwardedFor(origin_host)): TypedHeader<XForwardedFor>,
-    form: Form<LoginResponse>,
     query: Query<LoginQuery>,
+    form: Form<LoginResponse>,
   ) -> Result<Redirect, StatusCode>
   {
     if this
@@ -305,6 +310,7 @@ impl<const N: usize> WebServer<N>
   }
 
   #[instrument(skip(this))]
+  //#[axum_macros::debug_handler]
   async fn auth_handler(
     Extension(this): Extension<Self>,
     mut session: WritableSession,
