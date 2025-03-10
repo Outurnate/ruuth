@@ -43,7 +43,9 @@ jobs:
         name: ruuth-rpm
         path: target/generate-rpm/*.rpm
     - name: Install DEB build tool
-      run: sudo apt-get install -y cargo-deb
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-deb
     - name: Package DEB
       run: cargo deb
     - name: Upload DEB artifacts
