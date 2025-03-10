@@ -18,6 +18,8 @@ jobs:
     steps:
     - name: Checkout sources
       uses: actions/checkout@v4
+    - name: Install openssl
+      run: sudo dnf -y install openssl openssl-devel
     - name: Install stable toolchain
       uses: actions-rs/toolchain@v1
       with:
