@@ -31,6 +31,7 @@
         <ul>
           <li><a href="#source-installation">Source Installation</a></li>
           <li><a href="#rpm-installation">RPM Installation</a></li>
+          <li><a href="#deb-installation">DEB Installation</a></li>
         </ul>
         <li><a href="#configuring-your-webserver">Configuring Your Webserver</a></li>
         <ul>
@@ -90,6 +91,25 @@ Distro packages are provided where possible.  For all other cases, project must 
 2. Install the package
    ```sh
    sudo rpm -i ruuth-0.1.5-1.x86_64.rpm
+   ```
+3. Customize the config file
+   ```sh
+   sudo vi /etc/ruuth.toml
+   ```
+4. Enable and start the systemd service
+   ```sh
+   sudo systemctl enable --now ruuth
+   ```
+
+#### DEB Installation
+
+1. Download the DEB package
+   ```sh
+   curl -OsSL https://github.com/Outurnate/ruuth/releases/download/v0.2.2/ruuth-0.2.2-1.x86_64.deb
+   ```
+2. Install the package
+   ```sh
+   sudo dpkg -i ruuth-0.2.2-1.x86_64.deb
    ```
 3. Customize the config file
    ```sh
