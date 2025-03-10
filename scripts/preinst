@@ -1,0 +1,3 @@
+#!/bin/bash
+getent group ruuth >/dev/null 2>&1 || groupadd -r ruuth
+getent passwd ruuth >/dev/null 2>&1 || useradd -g ruuth -r --no-create-home -s /usr/sbin/nologin -c "ruuth authentication daemon account" ruuth

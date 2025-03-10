@@ -1,0 +1,3 @@
+#!/bin/bash
+# systemctl stop ruuth
+systemctl disable --now ruuth

@@ -35,8 +35,17 @@ jobs:
         crate: cargo-generate-rpm
     - name: Package RPM
       run: cargo generate-rpm
-    - name: Upload artifacts
+    - name: Upload RPM artifacts
       uses: actions/upload-artifact@v3
       with:
         name: ruuth-rpm
         path: target/generate-rpm/*.rpm
+    - name: Install DEB build tool
+      run: sudo apt-get install -y cargo-deb
+    - name: Package DEB
+      run: cargo deb
+    - name: Upload DEB artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ruuth-deb
+        path: target/debian/*.deb
