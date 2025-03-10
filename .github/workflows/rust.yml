@@ -36,7 +36,7 @@ jobs:
     - name: Package RPM
       run: cargo generate-rpm
     - name: Upload RPM artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ruuth-rpm
         path: target/generate-rpm/*.rpm
@@ -45,7 +45,7 @@ jobs:
     - name: Package DEB
       run: cargo deb
     - name: Upload DEB artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ruuth-deb
         path: target/debian/*.deb
