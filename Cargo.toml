@@ -1,9 +1,10 @@
 [package]
 name = "ruuth"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 license = "GPL-3.0-or-later"
 description = "Lightweight NGINX auth_request backend"
+authors = ["Outurnate"]
 
 [dependencies]
 
@@ -19,18 +20,37 @@ color-eyre = { version = "0.6", features = ["tracing-error"] }
 axum = { version = "0.6", features = ["headers"] }
 axum-sessions = "0.5"
 async-redis-session = { git = "https://github.com/jbr/async-redis-session.git", rev = "1bf5106" }
-async-sqlx-session = { git = "https://github.com/jbr/async-sqlx-session.git", rev = "06a3abb", default-features = false, features = ["mysql", "pg", "sqlite"] }
+async-sqlx-session = { git = "https://github.com/jbr/async-sqlx-session.git", rev = "06a3abb", default-features = false, features = [
+  "mysql",
+  "pg",
+  "sqlite",
+] }
 axum-server = { version = "0.5", features = ["tls-rustls"] }
-askama = { version = "0.12", default-features = false, features = ["with-axum"] }
+askama = { version = "0.12", default-features = false, features = [
+  "with-axum",
+] }
 askama_derive = "0.12"
 askama_axum = "0.3"
 hyperlocal = "0.8"
 hyper = "0.14"
 
 # sea orm
-sea-orm = { version = "0.11", default-features = false, features = ["runtime-tokio-rustls", "sqlx-sqlite", "sqlx-postgres", "sqlx-mysql"] }
-sea-orm-migration = { version = "0.11", default-features = false, features = ["sqlx-sqlite", "sqlx-postgres", "sqlx-mysql"] }
-sqlx = { version = "0.6", default-features = false, features = ["sqlite", "postgres", "mysql"] }
+sea-orm = { version = "0.11", default-features = false, features = [
+  "runtime-tokio-rustls",
+  "sqlx-sqlite",
+  "sqlx-postgres",
+  "sqlx-mysql",
+] }
+sea-orm-migration = { version = "0.11", default-features = false, features = [
+  "sqlx-sqlite",
+  "sqlx-postgres",
+  "sqlx-mysql",
+] }
+sqlx = { version = "0.6", default-features = false, features = [
+  "sqlite",
+  "postgres",
+  "mysql",
+] }
 
 # config/cli
 clap = { version = "4.0", features = ["derive"] }
@@ -68,11 +88,20 @@ codegen-units = 1
 assets = [
   { source = "target/release/ruuth", dest = "/usr/bin/ruuth", mode = "755", config = false, doc = false },
   { source = "pkg/ruuth.toml", dest = "/etc/ruuth.toml", mode = "644", config = true, doc = false },
-  { source = "pkg/ruuth.service", dest = "/usr/lib/systemd/system/ruuth.service", mode = "644", config = true, doc = false }
+  { source = "pkg/ruuth.service", dest = "/usr/lib/systemd/system/ruuth.service", mode = "644", config = true, doc = false },
 ]
-pre_install_script = "getent group ruuth >/dev/null 2>&1 || groupadd -r ruuth; getent passwd ruuth >/dev/null 2>&1 || useradd -g ruuth -r --no-create-home -s /sbin/nologin -c \"ruuth authentication daemon account\" ruuth"
-post_install_script = "systemctl daemon-reload"
-pre_uninstall_script = "systemctl disable --now ruuth"
+pre_install_script = "scripts/preinst"
+post_install_script = "scripts/postinst"
+pre_uninstall_script = "scripts/prerm"
 
 [package.metadata.generate-rpm.requires]
 shadow-utils = "*"
+
+[package.metadata.deb]
+depends = "libc6 (>= 2.27)"
+assets = [
+  { source = "target/release/ruuth", dest = "/usr/bin/ruuth", mode = "755" },
+  { source = "pkg/ruuth.toml", dest = "/etc/ruuth/ruuth.toml", mode = "644" },
+  { source = "pkg/ruuth.service", dest = "/lib/systemd/system/ruuth.service", mode = "644" },
+]
+maintainer-scripts = "scripts/"
