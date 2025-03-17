@@ -30,7 +30,7 @@ askama = { version = "0.12", default-features = false, features = [
   "with-axum",
 ] }
 askama_derive = "0.12"
-askama_axum = "0.3"
+askama_axum = "0.4"
 hyperlocal = "0.8"
 hyper = "0.14"
 
